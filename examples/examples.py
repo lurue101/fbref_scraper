@@ -1,4 +1,4 @@
-from FBRef_scraper import FBRefScraper
+from fbref_scraper.FBRef_scraper import FBRefScraper
 import pandas as pd
 
 

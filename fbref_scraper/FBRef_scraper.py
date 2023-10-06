@@ -14,7 +14,7 @@ LEAGUE_MAPPING = {
     "Ligue 1": "ligue1",
     "Serie A": "seriea",
 }
-DATA_DIR_PATH = "data/"
+DATA_DIR_PATH = "../data/"
 
 
 class FBRefScraper:

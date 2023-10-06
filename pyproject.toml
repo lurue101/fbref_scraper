@@ -4,7 +4,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "fbref_scraper"
-version = "0.0.1"
+version = "0.0.2"
 authors = [
   { name="Lukas Rücker", email="ruecker.lukas@gmail.com" },
 ]

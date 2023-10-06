@@ -1,5 +1,5 @@
 import pandas as pd
-from FBRef_scraper import FBRefScraper
+from fbref_scraper.FBRef_scraper import FBRefScraper
 import bs4
 from website_texts import (
     keeper_stats,
