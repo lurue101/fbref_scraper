@@ -14,7 +14,13 @@ LEAGUE_MAPPING = {
     "Ligue 1": "ligue1",
     "Serie A": "seriea",
 }
-DATA_DIR_PATH = "../data/"
+FBREF_URL_COMPETITION_NUMBER = {
+    "Bundesliga": 20,
+    "Premier League": 9,
+    "La Liga": 12,
+    "Ligue 1": 13,
+    "Serie A": 11,
+}
 
 
 class FBRefScraper:
@@ -22,7 +28,13 @@ class FBRefScraper:
     Class to scrape game stats, lineups and general info from FBRef website and output it as Dataframes
     """
 
-    def __init__(self, season_start_year: int, season_end_year: int, league_name: str):
+    def __init__(
+        self,
+        season_start_year: int,
+        season_end_year: int,
+        league_name: str,
+        data_dir_path: str = "data",
+    ):
         """
 
         Parameters
@@ -37,6 +49,7 @@ class FBRefScraper:
         self.season_start_year: int = season_start_year
         self.season_end_year: int = season_end_year
         self.league_name: str = league_name
+        self.data_dir_path = data_dir_path
 
     def generate_fixtures_url(self):
         """
@@ -47,7 +60,7 @@ class FBRefScraper:
             Url to Fbref fixtures sites that contains the meta info to all games from that season
         """
         url = (
-            f"https://fbref.com/en/comps/20/{self.season_start_year}-{self.season_end_year}/"
+            f"https://fbref.com/en/comps/{FBREF_URL_COMPETITION_NUMBER[self.league_name]}/{self.season_start_year}-{self.season_end_year}/"
             f"schedule/{self.season_start_year}-{self.season_end_year}-{self.league_name}-Scores-and-Fixtures"
         )
         return url
@@ -117,7 +130,7 @@ class FBRefScraper:
         df_fixtures = df_fixtures.rename(columns={"match_report": "match_report_url"})
         if save_as_csv:
             file_path = os.path.join(
-                DATA_DIR_PATH,
+                self.data_dir_path,
                 f"{LEAGUE_MAPPING[self.league_name]}/fbref/fixtures_{self.season_start_year}_{self.season_end_year}.csv",
             )
             df_fixtures.to_csv(file_path, index=False)
@@ -516,31 +529,37 @@ class FBRefScraper:
         -------
 
         """
+        league_fbref_dir_path = os.path.join(
+            self.data_dir_path, LEAGUE_MAPPING[self.league_name], "fbref"
+        )
         path_to_fixtures_csv = os.path.join(
-            DATA_DIR_PATH,
+            self.data_dir_path,
             f"{LEAGUE_MAPPING[self.league_name]}/fbref/fixtures_{self.season_start_year}_{self.season_end_year}.csv",
         )
+        if not os.path.exists(league_fbref_dir_path):
+            os.mkdir(league_fbref_dir_path)
+
         df_player_stats, df_keeper_stats, df_lineups = self.match_reports_to_dfs(
             path_to_fixtures_csv
         )
         df_player_stats.to_csv(
             os.path.join(
-                DATA_DIR_PATH,
-                f"{LEAGUE_MAPPING[self.league_name]}/fbref/player_stats_{self.season_start_year}_{self.season_end_year}.csv",
+                league_fbref_dir_path,
+                f"player_stats_{self.season_start_year}_{self.season_end_year}.csv",
             ),
             index=False,
         )
         df_keeper_stats.to_csv(
             os.path.join(
-                DATA_DIR_PATH,
-                f"{LEAGUE_MAPPING[self.league_name]}/fbref/keeper_stats_{self.season_start_year}_{self.season_end_year}.csv",
+                league_fbref_dir_path,
+                f"keeper_stats_{self.season_start_year}_{self.season_end_year}.csv",
             ),
             index=False,
         )
         df_lineups.to_csv(
             os.path.join(
-                DATA_DIR_PATH,
-                f"{LEAGUE_MAPPING[self.league_name]}/fbref/lineups_{self.season_start_year}_{self.season_end_year}.csv",
+                league_fbref_dir_path,
+                f"lineups_{self.season_start_year}_{self.season_end_year}.csv",
             ),
             index=False,
         )
